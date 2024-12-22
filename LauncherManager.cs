@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.IO;
 using UnityEngine.Rendering;
 using TMPro;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace LuncherGameDevBox
 {
@@ -23,6 +25,8 @@ namespace LuncherGameDevBox
 
         [Header("Game Settings")]
         public string mainGameScene;
+
+        private static Resolution[] resolutions;
 
         #endregion
 
@@ -97,21 +101,16 @@ namespace LuncherGameDevBox
 
         private void SetDefaultResolution()
         {
-            Resolution resolution = Screen.currentResolution;
-            string resolutionText = $"{resolution.width} x {resolution.height} (Monitor)";
-            screenDropdown.options[0].text = resolutionText;
-            screenDropdown.value = 0;
-            screenDropdown.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = resolutionText; // Fixing Unknown Bug
-            PlayerPrefs.SetString("Resolution", resolutionText);
+            string currentMonitorResolution = null;
+            SetupResolution(out currentMonitorResolution);
+
+            PlayerPrefs.SetString("Resolution", currentMonitorResolution);
         }
 
         private void UpdateResolutionDropdown(string resolution)
         {
-            Resolution res = Screen.currentResolution;
-            string resolutionText = $"{res.width} x {res.height}  (Monitor)";
-            screenDropdown.options[0].text = resolutionText;
-            screenDropdown.value = 0;
-            screenDropdown.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = resolutionText;
+            string currentMonitorResolution = null;
+            SetupResolution(out currentMonitorResolution);
 
             for (int i = 0; i < screenDropdown.options.Count; i++)
             {
@@ -122,6 +121,34 @@ namespace LuncherGameDevBox
                 }
             }
         }
+
+        private void SetupResolution(out string currentMonitorRes)
+        {
+            // Clear All Resolutions Options
+            screenDropdown.options.Clear();
+
+            currentMonitorRes = null;
+
+            // Setup other resolutions
+
+            for (int i = 0; i < resolutions.Length; i++)
+            {
+                if (i == 0)
+                {
+                    // Set first current Monitor Resolution
+                    Resolution resolution = Screen.currentResolution;
+                    currentMonitorRes = $"{resolution.width} x {resolution.height} (Monitor)";
+                    screenDropdown.options.Add(new TMP_Dropdown.OptionData(currentMonitorRes));
+                    screenDropdown.value = 0;
+                    //screenDropdown.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = currentMonitorRes; // Fixing Unknown Bug
+                    screenDropdown.RefreshShownValue();
+                }
+
+                screenDropdown.options.Add(new TMP_Dropdown.OptionData($"{resolutions[i].width} x {resolutions[i].height}"));
+            }
+        }
+
+
 
         private bool IsDirectX12Compatible()
         {
@@ -193,16 +220,9 @@ namespace LuncherGameDevBox
 
         public void SetResolution()
         {
-            string[] resolutions = {
-                "3840 x 2160", "3440 x 1440", "2560 x 1440", "2560 x 1080",
-                "1920 x 1080", "1760 x 990", "1650 x 1050", "1600 x 900",
-                "1366 x 768", "1280 x 1024", "1280 x 720", "1128 x 634",
-                "1024 x 768", "832 x 624", "800 x 600"
-            };
-
             PlayerPrefs.SetString("Resolution", screenDropdown.value == 0 ?
                 $"{Screen.currentResolution.width} x {Screen.currentResolution.height} (Monitor)" :
-                resolutions[screenDropdown.value - 1]);
+                $"{resolutions[screenDropdown.value - 1].width} x {resolutions[screenDropdown.value - 1].height}");
         }
 
         public void SetFullScreenMode()
@@ -244,6 +264,7 @@ namespace LuncherGameDevBox
         private static void LoadConfig()
         {
             Screen.SetResolution(640, 480, false);
+            resolutions = Screen.resolutions;
         }
 
         #endregion
