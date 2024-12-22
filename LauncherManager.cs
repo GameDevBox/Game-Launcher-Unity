@@ -6,8 +6,6 @@ using System.Diagnostics;
 using System.IO;
 using UnityEngine.Rendering;
 using TMPro;
-using System.Collections.Generic;
-using System.Drawing;
 
 namespace LuncherGameDevBox
 {
