@@ -6,6 +6,7 @@ you’ll see a launcher that lets you configure important settings like resoluti
 
 ## HOW TO:
 Download UnityPackage and import it to the project.
+
 🔥see the video tutorial for how it works: https://youtu.be/v2L1aKFOhf4
 
 Small Update: I've added "Screen.resolutions" to the screen dropdown, so it now caches all available resolutions at startup via code.
