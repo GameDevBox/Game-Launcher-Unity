@@ -167,7 +167,10 @@ namespace LuncherGameDevBox
             return;
 #endif
 
-            string executablePath = Application.dataPath.Replace("_Data", ".exe");
+                        string executablePath = System.IO.Path.Combine(
+    System.IO.Path.GetDirectoryName(Application.dataPath),
+    System.IO.Path.GetFileNameWithoutExtension(Application.dataPath)?.Replace("_Data", "") + ".exe"
+);
 
             if (!File.Exists(executablePath))
             {
